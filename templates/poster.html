@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset = "UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <title>Gramify My Music</title>
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='html2canvas.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+        }
+        header {
+            font-family: Proxima Nova;
+            font-style: italic;
+            color: #fff;
+            padding: 10px;
+            text-align: left;
+            position: relative;
+            height: 80px;
+            margin-left: 15px;
+            max-width: 580px;
+            display: block;
+        }
+        .headericon {
+            margin-left: 15px;
+            padding-right: 10px;
+            margin-top: 0px;
+            float: right;
+            font-size: 29px;
+
+        }
+        .container {
+            display: flex;
+            text-align: left;
+            margin-left: 15px;
+            margin-top: 100px;
+            margin-bottom: 0px;
+            max-height: 110px;
+            max-width: 600px;
+            align-items: center;
+        }
+        .image-container {
+            flex: 0 0 auto;
+            margin-bottom: 0px;
+            display: flex;
+            align-items: center;
+        }
+        .image-container img {
+            display: flex;
+            border-radius: 100%;
+            border: 3px solid transparent;
+            background: linear-gradient(to top right, #eb991f,#e16416,#e4186a, #d53a9d, #743ad5, #c42a8c);
+            background-origin: border-box;
+
+            width: 45px;
+            height: 45px;
+            left: 1px;
+            bottom: 10px;
+            overflow: hidden;
+            position:relative;
+            margin-inline: 1px;
+            top: 44px;
+            margin-bottom: 50px;
+        }
+
+        .SpHandle{
+            font-family: sans-serif;
+            color: white;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+
+        .albumCover{
+            margin-top: 10;
+            padding-top: 10px;
+            position: relative;
+            top: 0px;
+            left: 15px; 
+        }
+
+        .stories{
+            /* border:1px solid green; */
+            max-width: 600px;
+            margin-left: 15px;
+            position: absolute;
+            display: flex;
+        }
+        .stories::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .story-container p{
+            color: white;
+            text-align: center;
+            /* border:1px solid green; */
+            padding: 10px;
+            right: 10px;
+            font-size: 12px;
+            margin-top: -8px;
+            margin-left: 1px;
+            max-width: 100px;
+        }
+        .story-container {
+            float: left;
+            margin: 0px;
+            width: 120px;
+            height:100px;
+        }
+        .story-container img {
+            overflow: hidden;
+            position:relative;
+            display: inline-block;
+
+            margin-left: 4px;
+            border-radius: 100px;
+            width: 100px;
+            height: 100px;
+            border: 4px solid transparent;
+            background: linear-gradient(to top right, #eb991f,#e16416,#e4186a, #d53a9d, #743ad5, #c42a8c);
+            background-origin: border-box;
+        }
+
+        .likebookmark{
+            display: in-line;
+        }
+        .likebookmark .heart{
+            color: white;
+            font-size: 26px;
+            margin-top: 6px;
+        }
+        .likebookmark  .bookmark{
+            color: white;
+            justify-content: space-between;
+            float:right;
+            font-size: 30px;
+        }
+        .bio{
+            margin-bottom: 0px;
+            margin-left: 15px;
+            max-width: 600px;
+            /* border:1px solid green; */
+            font-family: sans-serif;
+            color: white;
+            
+        }
+        .bio a {
+        color: inherit; /* Inherits text color from the parent */
+        text-decoration: none; /* Removes underline */
+        }
+        .bio h3{
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 28px;
+            margin: 0;
+            display: inline-block;
+        }
+        .bio p{
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 28px;
+            text-align: justify;
+            display: inline;
+        }
+
+        .comments{
+            margin-left: 0px;
+        }
+        .comments h3{
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 28px;
+            margin: 0;
+            display: inline-block;
+        }
+        
+        #capture{
+            background-color: #0c0f14;
+            max-height: 1100px;
+            max-width: 630px;
+            min-width: 630px;
+        }
+        .Output{
+            display: block;
+            margin-left: auto;
+            margin-right:auto;
+            margin-top: 20px;
+            width: 60%;
+        }
+
+        
+        .btn{
+            width:160px;
+            text-align: center;
+            text-transform: uppercase;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            -webkit-transition-duration: 0.3s;
+            transition-duration: 0.3s;
+            -webkit-transition-property: box-shadow, transform;
+        }
+        .btn:hover, .btn:focus, .btn:active{
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+        .page{
+            justify-content:  center;
+            display: flex;
+            align-items: center;
+        }
+        .vertial-align{
+            position: absolute;
+            top: 20%;
+        }
+        .page footer{
+            color: #E1D9D1;
+            text-align: center;
+        }
+        .switch{
+            margin-top: 5%;
+            padding: 0%;
+            margin-bottom: 0%;
+        }
+        .switch .btn{
+            font-family: "Roboto", sans-serif;
+            padding-left: 40px;
+            padding-right: 40px;
+            margin-left: 10px;
+            margin-right: 10px;
+            font-size: 13px;
+            width: auto;  
+            font-weight: bold;
+            background: #1dad4f;
+            height: 30px;
+            border-radius: 5px;
+
+        }
+        .viewmore{
+            color:#a2aab5;
+        }
+    </style>
+</head>
+
+
+<body>
+<div class="page">
+    <div class="vertical-align">
+
+    
+        <div class="switch">
+            <center>
+            <button class ="btn" onclick="location.href = '/fourweeks';">4 Weeks</button>
+            <button class ="btn" onclick="location.href = '/sixmonths';">6 Months</button>
+            <button class ="btn" onclick="location.href = '/alltime';">All time</button>
+            <button class="btn" id="download">Download</button>
+
+            <script>
+                $("#download").on("click", function() {
+                    html2canvas(document.querySelector("#capture"), {
+                        scale: 2,
+                        logging: true,
+                        letterRendering: 1,
+                        allowTaint: true,
+                        useCORS: true,
+                        backgroundColor: "#0c0f14",
+                        width: 630,
+                        height: 1100,
+                        windowWidth: 630,
+                        windowHeight: 1100
+                    }).then(canvas => {
+                        canvas.toBlob(function(blob) {
+                            window.saveAs(blob, 'Gramify.jpg');
+                        });
+                    });
+                });
+            </script>
+            </center>
+        </div>
+    
+        <div class="Output"  id="capture">
+        <header>
+            <h1>Gramify
+            <span class = 'headericon'><i class="fa fa-send-o"></i></span>
+            <span class = 'headericon'><i class="fa fa-heart-o"></i></span>
+            </h1>
+        </header>
+        <div class="stories">
+            <div id='story1' class="story-container" onclick="location.href='{{ TopArtistAllTime['items'][0]['external_urls']['spotify'] }}';">
+                <img class="image" src="{{TopArtistAllTime['items'][0]['images'][0]['url']}}" width="300" height="300">
+                <p> {{TopArtistAllTime['items'][0]['name']}}</p>
+            </div>
+            <div id='story2' class="story-container" onclick="location.href='{{ TopArtistAllTime['items'][1]['external_urls']['spotify'] }}';">
+                <img class="image" src="{{TopArtistAllTime['items'][1]['images'][0]['url']}}" width="300" height="300">
+                <p> {{TopArtistAllTime['items'][1]['name']}}</p>
+            </div>
+            <div id='story2' class="story-container" onclick="location.href='{{ TopArtistAllTime['items'][2]['external_urls']['spotify'] }}';">
+                <img class="image" src="{{TopArtistAllTime['items'][2]['images'][0]['url']}}" width="300" height="300">
+                <p> {{TopArtistAllTime['items'][2]['name']}}</p>
+            </div>
+            <div id='story2' class="story-container" onclick="location.href='{{ TopArtistAllTime['items'][3]['external_urls']['spotify'] }}';">
+                <img class="image" src="{{TopArtistAllTime['items'][3]['images'][0]['url']}}" width="300" height="300">
+                <p> {{TopArtistAllTime['items'][3]['name']}}</p>
+            </div>
+            <div id='story2' class="story-container" onclick="location.href='{{ TopArtistAllTime['items'][4]['external_urls']['spotify'] }}';">
+                <img class="image" src="{{TopArtistAllTime['items'][4]['images'][0]['url']}}" width="300" height="300">
+                <p> {{TopArtistAllTime['items'][4]['name']}}</p>
+    
+            </div>
+        </div>
+    
+        <div class="container">
+
+                <div class = "image-container">
+                    {% if UserInfo['images'] %}
+                    <img class="image" src="{{UserInfo['images'][0]['url']}}" width="100" height="100">
+                    {% else %}
+                    <img class="image" src="{{ url_for('static', filename='pfp.png')}}" width="100" height="100">
+                    {% endif %}
+                </div>
+
+                <div class="SpHandle">
+                    {% if UserInfo['display_name'] %}
+                        <h2>{{UserInfo['display_name']}}'s Most Listened Songs of the Month</h2>
+                    {% else %}
+                        <h2>Your Most Listened Songs of the Month</h2>
+                    {% endif %}
+                </div>
+        </div>
+
+
+        <div class='albumCover'>
+            <a href="{{TopSongsAllTime['items'][0]['external_urls']['spotify']}}" target="_blank">
+                <img src="{{TopSongsAllTime['items'][0]['album']['images'][0]['url']}}" width="600" height="600">
+            </a>
+
+
+        </div>
+    
+        <div class='bio'>
+            <div class="likebookmark">
+                <span class="heart"><i class="fa fa-heart"></i></span>
+                <span class="bookmark"><i class="fa fa-bookmark-o"></i></span>
+            </div>
+
+            <div class='comments'>
+                <a href="{{TopSongsAllTime['items'][0]['external_urls']['spotify']}}" target="_blank">
+                    <h3>{{TopSongsAllTime['items'][0]['artists'][0]['name']}}</h3>
+                    <p>&nbsp;{{TopSongsAllTime['items'][0]['name']}}</p>
+                </a>
+            </div>
+            
+            <div class='comments'>
+                <a href="{{TopSongsAllTime['items'][1]['external_urls']['spotify']}}" target="_blank">
+                    <h3>{{TopSongsAllTime['items'][1]['artists'][0]['name']}}</h3>
+                    <p>&nbsp;{{TopSongsAllTime['items'][1]['name']}}</p>
+                </a>
+            </div>
+    
+            <div class='comments'>
+                <a href="{{TopSongsAllTime['items'][2]['external_urls']['spotify']}}" target="_blank">
+                    <h3>{{TopSongsAllTime['items'][2]['artists'][0]['name']}}</h3>
+                    <p>&nbsp;{{TopSongsAllTime['items'][2]['name']}}</p>
+                </a>
+            </div>
+
+            <div class ='viewmore'>
+                <p>View all comments </p>
+            </div> 
+
+            <br>
+
+
+
+        </div>
+        </div>
+    
+    
+        <footer>
+            <p>All images are copyrighted by their respective copyright owners. </p>
+            <br>
+            <p>Note we are not associated with Spotify AB or its partners in any way</p>
+        </footer>
+    </div>
+</div>
+
+</body>
+</html>
+
